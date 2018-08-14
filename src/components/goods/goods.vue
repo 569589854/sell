@@ -183,6 +183,7 @@
               bg-image('special_3')
     .goods-wrapper
       flex 1
+      /*width 100%*/
       overflow hidden
       .title
         height 26px
