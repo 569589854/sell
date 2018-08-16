@@ -13,7 +13,7 @@
         <router-link to="/seller">商家</router-link>
       </div>
     </div>
-    <router-view></router-view>  
+    <router-view :seller="seller"></router-view>
   </div>
 </template>
 
@@ -49,7 +49,7 @@ export default {
   //   let href = location.href;
   //   if(href.indexOf('goods')==-1 && href.indexOf("ratings")==-1 && href.indexOf("seller")==-1 && this.flag==true){
   //     console.log("true")
-  //     document.getElementById("default_red").classList.add("active"); 
+  //     document.getElementById("default_red").classList.add("active");
   //   }
   // },
   // beforeDestroy(){
@@ -71,7 +71,7 @@ export default {
 
 <style lang="stylus" rel="stylesheet/stylus">
 @import './common/stylus/mixin.styl'
-.tab 
+.tab
   display: flex
   width: 100%
   height: 40px

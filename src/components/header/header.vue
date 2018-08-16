@@ -68,7 +68,7 @@
 <script>
   import axios from 'axios'
   import star from 'components/star/star'
-  export default{ 
+  export default{
     props:{
       seller:{
         type:Object,
@@ -77,7 +77,7 @@
     data(){
       return{
         detailShow:false,
-        
+
       }
     },
     methods:{
@@ -98,7 +98,7 @@
 </script>
 <style lang="stylus">
 @import '../../common/stylus/mixin.styl'
-.header 
+.header
   color #fff
   position relative
   overflow hidden
@@ -172,7 +172,7 @@
       .icon-keyboard_arrow_right
         font-size 10px
         // line-height 12px
-          
+
   .bulletin-wrapper
     position relative
     height 28px
@@ -196,7 +196,7 @@
       vertical-align top
       margin 0 4px
       font-size 10px
-      line-height 28px    
+      line-height 28px
     .icon-keyboard_arrow_right
       position absolute
       font-size 10px
@@ -207,8 +207,8 @@
     height 100%
     position absolute
     top 0px
-    left 0px  
-    z-index -1  
+    left 0px
+    z-index -1
     filter: blur(10px)
   .detail-show
     position fixed
@@ -225,10 +225,9 @@
       opacity: 1
     &.fade-enter-active
       transition all 0.8s
-    
     &.fade-enter-cancelled
       transition all 10s
-      
+
 
     .detail-content
       min-height 100%
@@ -258,7 +257,7 @@
           .text
             font-weight 700
             font-size 16px
-            padding 0 12px      
+            padding 0 12px
         .support
           width 80%
           margin 0 auto
@@ -297,17 +296,17 @@
             padding 0 12px
             font-size 12px
             font-weight 200
-            line-height 24px     
+            line-height 24px
     .detail-close
       width 32px
       height 32px
       font-size 32px
       clear both
       margin -64px auto 0 auto
-      
-        
-    
-  
-      
-    
+
+
+
+
+
+
 </style>
