@@ -1,61 +1,69 @@
 <template>
-  <div class="shopcart">
-    <div class="content">
-      <div class="content-left">
-        <div class="logo-wrapper" @click="listFold">
-          <div class="logo" :class="{'highlight': totalCount>0}">
-            <i class="icon-shopping_cart icon" :class="{'highlight': totalCount>0}"></i>
+  <div class="wrapper">
+    <div class="shopcart">
+      <div class="content">
+        <div class="content-left" @click="listFold">
+          <div class="logo-wrapper">
+            <div class="logo" :class="{'highlight': totalCount>0}">
+              <i class="icon-shopping_cart icon" :class="{'highlight': totalCount>0}"></i>
+            </div>
+            <div v-show="totalCount>0" class="count">{{totalCount}}</div>
           </div>
-          <div v-show="totalCount>0" class="count">{{totalCount}}</div>
+          <div class="price" :class="{'highlight':totalPrice>0}">￥{{totalPrice}}</div>
+          <div class="desc">另需配送费￥{{deliveryPrice}}元</div>
         </div>
-        <div class="price" :class="{'highlight':totalPrice>0}">￥{{totalPrice}}</div>
-        <div class="desc">另需配送费￥{{deliveryPrice}}元</div>
+        <div class="content-right" :class="payClass" @click="pay">{{deliveryDesc}}</div>
       </div>
-      <div class="content-right" :class="payClass">{{deliveryDesc}}</div>
-    </div>
-    <div class="ball-container">
-      <transition-group tag="div" name="drop"
-                        @before-enter="beforeEnter"
-                        @enter="dropEnter"
-                        @after-enter="afterEnter">
-        <div class="ball" v-for="(ball,index) in balls" :key="index" v-show="ball.show">
-          <div class="inner inner-hook"></div>
-        </div>
-      </transition-group>
-    </div>
-    <transition name="fold"
-                @before-enter="beforeFold"
-                @enter="foldEnter"
-                @after-enter="afterFold"
-    >
-      <div ref="foldCart" class="cartlist-wrapper" v-show="showList">
-        <div class="list-header">
-          <h1 class="title">购物车</h1>
-          <span class="empty">清空</span>
-        </div>
-        <div class="list-content">
-          <ul>
-            <li v-for="food in selectFoods" class="food">
-              <span class="name">{{food.name}}</span>
-              <div class="price"><span class="price-icon">￥</span>{{food.price}}</div>
-              <div class="cartcontrol-wrapper">
-                <cartcontrol :food="food"></cartcontrol>
-              </div>
-            </li>
-          </ul>
-        </div>
+      <div class="ball-container">
+        <transition-group tag="div" name="drop"
+                          @before-enter="beforeEnter"
+                          @enter="dropEnter"
+                          @after-enter="afterEnter">
+          <div class="ball" v-for="(ball,index) in balls" :key="index" v-show="ball.show">
+            <div class="inner inner-hook"></div>
+          </div>
+        </transition-group>
       </div>
+      <transition name="fold"
+                  @before-enter="beforeUnfold"
+                  @enter="enterUnfold"
+                  @after-enter="afterUnfold"
+                  @enter-cancelled="cancelUnfold"
+      >
+        <div ref="foldCart" class="cartlist-wrapper" v-show="showList">
+          <div class="list-header">
+            <h1 class="title">购物车</h1>
+            <span class="empty" @click="empty">清空</span>
+          </div>
+          <div class="list-content" ref="scrollList">
+            <ul>
+              <li ref="li" v-for="food in selectFoods" class="food">
+                <span class="name">{{food.name}}</span>
+                <div class="price"><span class="price-icon">￥</span>{{food.price}}</div>
+                <div class="cartcontrol-wrapper">
+                  <cartcontrol @cart-decrease="cartDeacrease" :food="food"></cartcontrol>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </transition>
+    </div>
+    <transition name="fade">
+      <div class="list-mask" @click="hideList" v-show="showList"></div>
     </transition>
   </div>
-
 </template>
 
 <script>
   import cartcontrol from 'components/cartcontrol/cartcontrol'
+  import BScroll from 'better-scroll'
 
   export default {
     data() {
       return {
+        // 购物车最多显示行数
+        maxShowFood: 5,
         balls: [
           {
             show: false,
@@ -146,11 +154,39 @@
         }
         // 购物车不为空
         let show = !this.fold
-        // console.log(show)
+        if (show) {
+          this.$nextTick(() => {
+            if (!this.scroll) {
+              this.scroll = new BScroll(this.$refs.scrollList, {
+                click: true
+              })
+            } else {
+              this.scroll.refresh()
+            }
+          })
+        }
         return show
       }
     },
     methods: {
+      // 购物车物品减少动画
+      cartDeacrease(count) {
+        let liLength = this.$refs.li.length
+        // 一秒钟动画
+        this.$refs.foldCart.style.transition = 'all 1s ease'
+
+        // 购物车模块的top值
+        let top = parseInt(this.$refs.foldCart.style.top.split('px')[0])
+        // 如果某样商品减为0
+        if (count === 0) {
+          // 当购物车数量少于5时 向下移动一个li的高度 即48px
+          // 272,232 184 136 max-height = 232px 最多显示5件商品
+          if (liLength <= this.maxShowFood) {
+            let topNum = top + 48 + 'px'
+            this.$refs.foldCart.style.top = topNum
+          }
+        }
+      },
       drop(el) {
         for (let i = 0; i < this.balls.length; i++) {
           let ball = this.balls[i]
@@ -206,24 +242,51 @@
         ball.el = null;
       },
       listFold() {
-        this.fold = !this.fold
+        if (this.totalCount > 0) {
+          this.fold = !this.fold
+        }
       },
-      beforeFold() {
-
+      // 上升动画 （点击按钮时）
+      beforeUnfold() {
+        // 每次动画开始时购物车的位置
+        this.$refs.foldCart.style.top = 0
       },
-      foldEnter() {
+      // 执行动画时
+      enterUnfold() {
+        // let height = this.$refs.foldCart.offsetHeight
+        // this.$refs.foldCart.style.top = -height + 'px'
+      },
+      // 动画完成后 （上升动画完成后）
+      afterUnfold() {
+        // 购物车停在指定位置
         let height = this.$refs.foldCart.offsetHeight
-        console.log(height)
+        this.$refs.foldCart.style.top = -height + 'px'
+        // console.log(height)
       },
-      afterFold() {
-        if(!this.fold){
-          let height = this.$refs.foldCart.offsetHeight
-          this.$refs.foldCart.style.top = - height + 'px'
-        }else{
-          this.$refs.foldCart.style.top = 0
+      // 动画未完成时取消（上升过程突然点击按钮）
+      cancelUnfold() {
+        // 购物车复位
+        // console.log('复位了')
+        this.$refs.foldCart.style.top = 0
+      },
+      empty() {
+        this.selectFoods.forEach((food => {
+          food.count = 0
+        }))
+        this.fold = true
+        this.cancelUnfold()
+      },
+      hideList() {
+        this.fold = true
+      },
+      pay() {
+        if (this.totalPrice >= this.minPrice) {
+          console.log(`成功支付${this.totalPrice}元`)
         }
       }
-
+    },
+    created() {
+      this.$emit('hide-cart')
     },
     components: {
       cartcontrol
@@ -240,6 +303,7 @@
     bottom 0
     height 48px
     width 100%
+    z-index 50
     background-color #141d27
     .content
       display flex
@@ -352,12 +416,25 @@
       top 0
       z-index -1
       width 100%
+      &.fold-enter-active, &.fold-leave-active
+        transition 1s ease
+
+      // 进入动画前 可有可无
       &.fold-enter
         transform translate3d(0, 0, 0)
+
+      // 想要实现的动画效果  向上平移100%
       &.fold-enter-to
         transform translate3d(0, -100%, 0)
-      &.fold-enter-active, &.fold-leave-active
-        transition all 1s
+
+      // 离开动画前 可有可无
+      &.fold-leave
+        transform translate3d(0, 0, 0)
+
+      // 离开时的效果 向下平移100%
+      &.fold-leave-to
+        transform translate3d(0, 100%, 0)
+
       .list-header
         height 40px
         line-height 40px
@@ -374,7 +451,7 @@
           font-size 12px
           color rgb(0, 160, 220)
       .list-content
-        max-height 217px
+        max-height 232px
         padding 0 18px
         background-color #fff
         overflow hidden
@@ -405,5 +482,26 @@
           position absolute
           right 0
           bottom 6px
+
+  .list-mask
+    position: fixed
+    top 0
+    left 0
+    width 100%
+    height 100%
+    z-index 40
+    background-color rgba(7, 17, 27, 0.6)
+    //backdrop-filter: blur(10px)
+    filter blur(10px)
+    &.fade-enter-active, &.fade-leave-active
+      transition all 1s
+    &.fade-enter
+      opacity 0
+    &.fade-enter-to
+      opacity 1
+    &.fade-leave
+      opacity 1
+    &.fade-leave-to
+      opacity 0
 
 </style>

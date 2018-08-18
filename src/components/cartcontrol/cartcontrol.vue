@@ -1,12 +1,14 @@
 <template>
   <div class="cartcontrol">
     <transition name="move">
-      <div class="decrease" @click="decrease($event)" v-show="food.count>0">
-        <span class="icon-remove_circle_outline inner" v-show="food.count>0"></span>
+      <div class="decrease" @click.stop.prevent="decrease($event)" v-show="food.count>0">
+        <transition name="roll">
+          <span style="display: block" class="icon-remove_circle_outline inner" v-show="food.count>0"></span>
+        </transition>
       </div>
     </transition>
     <div class="count" v-show="food.count>0">{{food.count}}</div>
-    <div class="increase icon-add_circle" @click="increase($event)"></div>
+    <div class="increase icon-add_circle" @click.stop.prevent="increase($event)"></div>
   </div>
 </template>
 
@@ -25,8 +27,11 @@
           return
         }
         this.food.count--
+        this.$emit('cart-decrease', this.food.count)
+        // console.log(this.food.count)
       },
       increase(e) {
+        // console.log(e.target)
         if (!e._constructed) {
           return
         }
@@ -59,23 +64,34 @@
       color rgb(147, 153, 159)
     .decrease
       display inline-block
+      // 旋转动画 必须在块级元素中里面 span(display:block) 标签 不会生效！
+      .inner
+        &.roll-enter-active, &.roll-leave-active
+          transition all .8s
+        &.roll-enter
+          transform: rotate(0)
+        &.roll-enter-to
+          transform: rotate(-360deg)
+        &.roll-leave
+          transform: rotate(0)
+        &.roll-leave-to
+          transform: rotate(360deg)
       // 弹出动画, 隐藏动画
-      &.move-enter, &.move-leave-to
-        opacity: 0
-        transform: translate3d(24px, 0, 0)
-        .inner
-          transition: all 0.4s linear
-          rotate(0)
+      &.move-enter-active, &.move-leave-active
+        transition all .8s
+      &.move-enter
+        opacity 0
+        transform translate3d(24px, 0, 0)
       &.move-enter-to
-        .inner
-          transition: all 0.4s linear
-          rotate(180deg)
-      // 弹出时间
-      &.move-enter-active
-        transition all 1s
-      // 隐藏时间
-      &.move-leave-active
-        transition all 1.3s ease
+        opacity: 1
+        transform: translate3d(0, 0, 0)
+      &.move-leave
+        opacity: 1
+        transform: translate3d(0, 0, 0)
+      &.move-leave-to
+        opacity 0
+        transform: translate3d(24px, 0, 0)
+
 
 
 </style>

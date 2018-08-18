@@ -1,6 +1,6 @@
 <template>
   <div class="goods">
-    <div class="menu-wrapper" ref="menu">
+    <div class="menu-wrapper" ref="menu" >
       <ul>
         <li class="menu-item" v-for="(item,index) in goods" :class="{'current':currentIndex===index}"
             @click="selectMenu(index,$event)">
@@ -10,12 +10,12 @@
         </li>
       </ul>
     </div>
-    <div class="goods-wrapper" ref="goods">
+    <div class="goods-wrapper" ref="goods" >
       <ul>
         <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item">
+            <li @click="selectFood(food,$event)" v-for="food in item.foods" class="food-item">
               <div class="icon">
                 <img width="57" height="57" :src="food.icon">
               </div>
@@ -46,6 +46,7 @@
     </div>
     <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice"
               :min-price="seller.minPrice"></shopcart>
+    <food @food-add="cartAdd" @first-cart-add="cartAdd" :food="selectedFood" ref="food"></food>
   </div>
 </template>
 <script>
@@ -53,24 +54,29 @@
   import BScroll from 'better-scroll'
   import shopcart from 'components/shopcart/shopcart'
   import cartcontrol from 'components/cartcontrol/cartcontrol'
-
+  import food from 'components/food/food'
+  import split from 'components/split/split'
   export default {
     props: {
       seller: {
         type: Object,
-      }
+      },
     },
     data() {
       return {
         goods: [],
         listHeight: [],
         scrollY: 0,
-        totalCount: 1
+        totalCount: 1,
+        blur: false,
+        selectedFood: {}
       }
     },
     components: {
       shopcart,
-      cartcontrol
+      cartcontrol,
+      food,
+      split
     },
     computed: {
       // 计算当前商品所处纵坐标对应菜单的索引值index
@@ -100,6 +106,20 @@
       }
     },
     methods: {
+      // 点击任意位置 隐藏购物车
+      hideCart() {
+        if (this.totalCount > 0) {
+          this.$refs.shopcart.fold = true
+        }
+        this.$refs.shopcart.cancelUnfold()
+      },
+      selectFood(food, e){
+        if(!e._constructed){
+          return
+        }
+        this.selectedFood = food
+        this.$refs.food.show()
+      },
       selectMenu(index, e) {
         // 如果不存在这个属性,则为原生点击事件，不执行下面的函数
         if (!e._constructed) {
@@ -141,11 +161,14 @@
         // console.log(this.listHeight)
       },
       cartAdd(target) {
-        this.$nextTick( () => {
+        // console.log(target)
+        // console.log('drop')
+        this.$nextTick(() => {
           // 调用shopcart组件的drop()函数
           this.$refs.shopcart.drop(target)
         })
       }
+
     },
     created() {
       this.classList = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
@@ -161,6 +184,9 @@
         .catch(err => {
           console.log(err)
         })
+    },
+    mounted() {
+      blur = this.$refs.shopcart.fold
     }
   }
 </script>
@@ -171,6 +197,9 @@
     display flex
     top 174px
     bottom 58px
+    &.hasCart
+      color rgba(7, 17, 27, 0.6)
+      filter: blur(10px)
     .menu-wrapper
       overflow hidden
       flex 0 0 80px
