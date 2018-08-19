@@ -1,7 +1,11 @@
 <template>
-    <div>
-        I am ratings
+    <div class="ratings">
+        <div class="ratings-wrapper">
+          <div class="overview"></div>
+        </div>
     </div>
 </template>
 <script></script>
-<style></style>
+<style lang="stylus" scoped>
+
+</style>

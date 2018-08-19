@@ -224,9 +224,9 @@
     &.fade-enter-to
       opacity: 1
     &.fade-enter-active
-      transition all 0.8s
+      transition all 0.6s
     &.fade-enter-cancelled
-      transition all 10s
+      transition all .6s
 
 
     .detail-content

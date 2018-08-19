@@ -173,7 +173,7 @@
       cartDeacrease(count) {
         let liLength = this.$refs.li.length
         // 一秒钟动画
-        this.$refs.foldCart.style.transition = 'all 1s ease'
+        this.$refs.foldCart.style.transition = 'all .4s ease'
 
         // 购物车模块的top值
         let top = parseInt(this.$refs.foldCart.style.top.split('px')[0])
@@ -282,6 +282,7 @@
       pay() {
         if (this.totalPrice >= this.minPrice) {
           console.log(`成功支付${this.totalPrice}元`)
+          this.empty()
         }
       }
     },
@@ -403,13 +404,13 @@
         z-index: 200
         border-radius 50%
         &.drop-enter-active
-          transition: all .8s cubic-bezier(0.49, -0.29, 0.75, 0.41)
+          transition: all .5s cubic-bezier(0.49, -0.29, 0.75, 0.41)
           .inner
             width: 16px
             height: 16px
             border-radius: 50%
             background: rgb(0, 160, 220)
-            transition: all .8s linear
+            transition: all .5s linear
     .cartlist-wrapper
       position: absolute
       left 0
@@ -417,7 +418,7 @@
       z-index -1
       width 100%
       &.fold-enter-active, &.fold-leave-active
-        transition 1s ease
+        transition .4s ease
 
       // 进入动画前 可有可无
       &.fold-enter
@@ -492,9 +493,9 @@
     z-index 40
     background-color rgba(7, 17, 27, 0.6)
     //backdrop-filter: blur(10px)
-    filter blur(10px)
+    blur(10px)
     &.fade-enter-active, &.fade-leave-active
-      transition all 1s
+      transition all .3s
     &.fade-enter
       opacity 0
     &.fade-enter-to

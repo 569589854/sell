@@ -67,7 +67,7 @@
       // 旋转动画 必须在块级元素中里面 span(display:block) 标签 不会生效！
       .inner
         &.roll-enter-active, &.roll-leave-active
-          transition all .8s
+          transition all .5s
         &.roll-enter
           transform: rotate(0)
         &.roll-enter-to
@@ -78,7 +78,7 @@
           transform: rotate(360deg)
       // 弹出动画, 隐藏动画
       &.move-enter-active, &.move-leave-active
-        transition all .8s
+        transition all .5s
       &.move-enter
         opacity 0
         transform translate3d(24px, 0, 0)
