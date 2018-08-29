@@ -28,6 +28,7 @@
         }
         this.food.count--
         this.$emit('cart-decrease', this.food.count)
+        this.$emit('to-shopcart', this.food)
         // console.log(this.food.count)
       },
       increase(e) {
@@ -42,6 +43,7 @@
         }
         // 提交'cart-add'事情给父组件，e.target传递的参数，获取点击事件
         this.$emit('cart-add', e.target)
+        this.$emit('to-shopcart', this.food)
       }
     }
   }
@@ -91,7 +93,6 @@
       &.move-leave-to
         opacity 0
         transform: translate3d(24px, 0, 0)
-
 
 
 </style>

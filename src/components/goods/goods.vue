@@ -167,6 +167,7 @@
           // 调用shopcart组件的drop()函数
           this.$refs.shopcart.drop(target)
         })
+        this.$emit('to-index',this.selectedFood)
       }
 
     },

@@ -9,32 +9,32 @@ import test from '@/components/header/test'
 Vue.use(Router)
 
 export default new Router({
-    mode:'history',
-    routes: [
-        {
-            path: '/',
-            name: 'goods',
-            component: goods
-        },
-        // {
-        //     path: '/test',
-        //     name: 'test',
-        //     component: test
-        // },
-        {
-            path: '/goods',
-            component: goods
-        },
-        {
-            path: '/ratings',
-            component: ratings
-        },
-        {
-            path: '/seller',
-            component: seller
-        },
-    ],
-    linkActiveClass:'active'
+  mode: 'history',
+  routes: [
+    {
+      path: '/',
+      name: 'goods',
+      component: goods
+    },
+    // {
+    //     path: '/test',
+    //     name: 'test',
+    //     component: test
+    // },
+    {
+      path: '/goods',
+      component: goods
+    },
+    {
+      path: '/ratings',
+      component: ratings
+    },
+    {
+      path: '/seller',
+      component: seller
+    },
+  ],
+  linkActiveClass: 'active'
 })
 
 // const app = new Vue({

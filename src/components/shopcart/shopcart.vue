@@ -41,7 +41,7 @@
                 <span class="name">{{food.name}}</span>
                 <div class="price"><span class="price-icon">￥</span>{{food.price}}</div>
                 <div class="cartcontrol-wrapper">
-                  <cartcontrol @cart-decrease="cartDeacrease" :food="food"></cartcontrol>
+                  <cartcontrol @to-shopcart="getParams" @cart-decrease="cartDeacrease" :food="food"></cartcontrol>
                 </div>
               </li>
             </ul>
@@ -169,6 +169,10 @@
       }
     },
     methods: {
+      getParams(param) {
+        console.log(param)
+        this.$emit('to-index', param)
+      },
       // 购物车物品减少动画
       cartDeacrease(count) {
         let liLength = this.$refs.li.length

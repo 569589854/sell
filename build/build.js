@@ -3,6 +3,7 @@ require('./check-versions')()
 
 process.env.NODE_ENV = 'production'
 
+// 长时间异步任务提示 building for production...
 const ora = require('ora')
 const rm = require('rimraf')
 const path = require('path')
