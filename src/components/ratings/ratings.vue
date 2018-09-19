@@ -147,7 +147,7 @@
     position absolute
     top 174px
     left 0
-    bottom 58px
+    bottom 1px
     width 100%
     overflow hidden
 
